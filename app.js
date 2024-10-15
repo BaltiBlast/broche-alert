@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ENV Variables
-const { TWITCH_CLIENT_ID, TWITCH_CLIENT_SECRET, TWITCH_EVENTSUB_URL, TWITCH_CALLBACK_URL } = process.env;
+const { TWITCH_CLIENT_ID, TWITCH_CLIENT_SECRET, TWITCH_EVENTSUB_URL, TWITCH_CALLBACK_URL, TWITCH_SECRET } = process.env;
 
 // Middleware
 app.use(bodyParser.json());
@@ -49,6 +49,7 @@ async function getTwitchUserId(username) {
   }
 }
 
+// ADD USER TO EVENTSUB STREAM ONLINE
 app.post("/subscribe-to-live/:username", async (req, res) => {
   const username = req.params.username;
   const userId = await getTwitchUserId(username);
@@ -71,6 +72,7 @@ app.post("/subscribe-to-live/:username", async (req, res) => {
         transport: {
           method: "webhook",
           callback: TWITCH_CALLBACK_URL,
+          secret: TWITCH_SECRET,
         },
       },
       {
@@ -86,6 +88,54 @@ app.post("/subscribe-to-live/:username", async (req, res) => {
   } catch (error) {
     console.error("Erreur lors de l'inscription à EventSub:", error.response?.data || error.message);
     res.status(500).json({ error: "Erreur lors de l'inscription à EventSub" });
+  }
+});
+
+// DELETE USER TO EVENTSUB STREAM ONLINE
+app.delete("/unsubscribe/:username", async (req, res) => {
+  const username = req.params.username;
+
+  try {
+    const userId = await getTwitchUserId(username);
+
+    if (!userId) {
+      return res.status(404).json({ error: "Utilisateur non trouvé." });
+    } else {
+      console.log(`${username} trouvé pour suppréssion`);
+    }
+
+    const accessToken = await getOAuthToken();
+
+    // Lister les abonnements
+    const response = await axios.get(TWITCH_EVENTSUB_URL, {
+      headers: {
+        "Client-ID": TWITCH_CLIENT_ID,
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const subscriptions = response.data.data;
+
+    // Trouver l'abonnement correspondant à l'utilisateur
+    const subscriptionToDelete = subscriptions.find((sub) => sub.condition.broadcaster_user_id === userId);
+
+    if (!subscriptionToDelete) {
+      return res.status(404).json({ error: `Aucun abonnement trouvé pour l'utilisateur ${username}.` });
+    }
+
+    const subscriptionId = subscriptionToDelete.id;
+
+    // Supprimer l'abonnement
+    await axios.delete(`${TWITCH_EVENTSUB_URL}?id=${subscriptionId}`, {
+      headers: {
+        "Client-ID": TWITCH_CLIENT_ID,
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    res.status(200).json({ message: `Abonnement supprimé pour l'utilisateur ${username}.` });
+  } catch (error) {
+    console.error("Erreur lors de la suppression de l'abonnement :", error.response?.data || error.message);
+    res.status(500).json({ error: "Erreur lors de la suppression de l'abonnement." });
   }
 });
 
