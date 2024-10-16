@@ -2,52 +2,16 @@ const express = require("express");
 require("dotenv").config();
 const bodyParser = require("body-parser");
 const axios = require("axios");
+const { getOAuthToken, getTwitchUserId } = require("./methods");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ENV Variables
-const { TWITCH_CLIENT_ID, TWITCH_CLIENT_SECRET, TWITCH_EVENTSUB_URL, TWITCH_CALLBACK_URL, TWITCH_SECRET } = process.env;
+const { TWITCH_CLIENT_ID, TWITCH_EVENTSUB_URL, TWITCH_CALLBACK_URL, TWITCH_SECRET } = process.env;
 
 // Middleware
 app.use(bodyParser.json());
-
-// AUTHENTICATION TO TWITCH APP
-async function getOAuthToken() {
-  const response = await axios.post("https://id.twitch.tv/oauth2/token", null, {
-    params: {
-      client_id: TWITCH_CLIENT_ID,
-      client_secret: TWITCH_CLIENT_SECRET,
-      grant_type: "client_credentials",
-    },
-  });
-  return response.data.access_token;
-}
-
-// GET USER ID BY USERNAME
-async function getTwitchUserId(username) {
-  try {
-    const accessToken = await getOAuthToken();
-
-    const response = await axios.get(`https://api.twitch.tv/helix/users?login=${username}`, {
-      headers: {
-        "Client-ID": TWITCH_CLIENT_ID,
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    if (response.data.data.length > 0) {
-      const userId = response.data.data[0].id;
-      console.log(`L'ID de l'utilisateur Twitch ${username} est : ${userId}`);
-      return userId;
-    } else {
-      console.error(`Utilisateur Twitch ${username} non trouvé.`);
-      return null;
-    }
-  } catch (error) {
-    console.error("Erreur lors de la récupération de l'ID utilisateur:", error.response?.data || error.message);
-  }
-}
 
 // ADD USER TO EVENTSUB STREAM ONLINE
 app.post("/subscribe-to-live/:username", async (req, res) => {
@@ -139,6 +103,24 @@ app.delete("/unsubscribe/:username", async (req, res) => {
   }
 });
 
+app.post("/webhooks/callback", (req, res) => {
+  // Vérifier le type de notification
+  const messageType = req.headers["twitch-eventsub-message-type"];
+
+  // Gérer la validation du challenge
+  if (messageType === "webhook_callback_verification") {
+    console.log("CHALLENGE", req.body.challenge);
+
+    return res.status(200).send(req.body.challenge);
+  }
+
+  // Log des événements reçus
+  console.log("Notification reçue de Twitch:", req.body);
+
+  // Répondre avec un statut 200 pour confirmer la réception
+  res.sendStatus(200);
+});
+
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log("La broche tourne sur https://localhost:3000");
 });
