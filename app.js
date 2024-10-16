@@ -102,16 +102,41 @@ app.delete("/unsubscribe/:username", async (req, res) => {
 });
 
 // VERFIY CALLBACK
-app.post("/webhooks/callback", (req, res) => {
-  console.log("Notification reçue de Twitch:", req.headers);
+app.post("/webhooks/callback", async (req, res) => {
+  const messageType = req.headers["twitch-eventsub-message-type"];
 
-  // const messageType = req.headers["twitch-eventsub-message-type"];
-  // if (messageType === "webhook_callback_verification") {
-  //   console.log("Notification reçue de Twitch:", req.body);
-  //   return res.status(200).send(req.body.challenge);
-  // }
-  // console.log("Notification reçue de Twitch:", req.body);
-  // res.sendStatus(200);
+  // Vérification du challenge
+  if (messageType === "webhook_callback_verification") {
+    return res.status(200).send(req.body.challenge);
+  }
+
+  // Si ce n'est pas un challenge, on vérifie l'état de l'abonnement
+  try {
+    const accessToken = await getOAuthToken();
+    const clientId = TWITCH_CLIENT_ID; // Ton client ID Twitch
+
+    const response = await axios.get("https://api.twitch.tv/helix/eventsub/subscriptions", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Client-ID": clientId,
+      },
+    });
+
+    const subscriptions = response.data.data;
+
+    // Chercher si l'abonnement est "enabled"
+    subscriptions.forEach((subscription) => {
+      if (subscription.status === "enabled") {
+        console.log("L'abonnement est actif !"); // Ceci s'affichera dans la console
+        // Tu peux également envoyer un message dans le chat ou gérer d'autres actions ici.
+      }
+    });
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.error("Erreur lors de la vérification de l'abonnement :", error);
+    res.sendStatus(500);
+  }
 });
 
 app.listen(PORT, () => {
