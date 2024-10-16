@@ -8,22 +8,21 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ENV Variables
-const { TWITCH_CLIENT_ID, TWITCH_EVENTSUB_URL, TWITCH_CALLBACK_URL, TWITCH_SECRET } = process.env;
+const { TWITCH_CLIENT_ID, TWITCH_EVENTSUB_URL, TWITCH_CALLBACK_URL, TWITCH_SECRET, DISCORD_WEBHOOK } = process.env;
 
 // Middleware
 app.use(bodyParser.json());
 
 // ADD USER TO EVENTSUB STREAM ONLINE
 app.post("/subscribe-to-live/:username", async (req, res) => {
-  const username = req.params.username;
-  const userId = await getTwitchUserId(username);
-
-  if (!userId) {
-    return res.status(400).json({ error: "L'ID de la chaîne Twitch est requis." });
-  }
-
   try {
+    const username = req.params.username;
+    const userId = await getTwitchUserId(username);
     const accessToken = await getOAuthToken();
+
+    if (!userId) {
+      return res.status(400).json({ error: "L'ID de la chaîne Twitch est requis." });
+    }
 
     const response = await axios.post(
       TWITCH_EVENTSUB_URL,
@@ -48,7 +47,7 @@ app.post("/subscribe-to-live/:username", async (req, res) => {
       }
     );
 
-    res.status(200).json({ message: "Abonnement à EventSub réussi", data: response.data });
+    res.status(202).json({ message: "Abonnement à EventSub réussi", data: response.data });
   } catch (error) {
     console.error("Erreur lors de l'inscription à EventSub:", error.response?.data || error.message);
     res.status(500).json({ error: "Erreur lors de l'inscription à EventSub" });
@@ -105,40 +104,48 @@ app.delete("/unsubscribe/:username", async (req, res) => {
 app.post("/webhooks/callback", async (req, res) => {
   const messageType = req.headers["twitch-eventsub-message-type"];
 
-  // Vérification du challenge
+  // Vérification du webhook Twitch
   if (messageType === "webhook_callback_verification") {
     return res.status(200).send(req.body.challenge);
   }
 
-  // Si ce n'est pas un challenge, on vérifie l'état de l'abonnement
-  try {
-    const accessToken = await getOAuthToken();
-    const clientId = TWITCH_CLIENT_ID; // Ton client ID Twitch
+  // Si une personne lance un live
+  if (messageType === "notification" && req.body.subscription.type === "stream.online") {
+    const streamerName = req.body.event.broadcaster_user_name;
 
-    const response = await axios.get("https://api.twitch.tv/helix/eventsub/subscriptions", {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Client-ID": clientId,
-      },
-    });
-
-    const subscriptions = response.data.data;
-
-    // Chercher si l'abonnement est "enabled"
-    subscriptions.forEach((subscription) => {
-      if (subscription.status === "enabled") {
-        console.log("L'abonnement est actif !"); // Ceci s'affichera dans la console
-        // Tu peux également envoyer un message dans le chat ou gérer d'autres actions ici.
-      }
-    });
-
-    res.sendStatus(200);
-  } catch (error) {
-    console.error("Erreur lors de la vérification de l'abonnement :", error);
-    res.sendStatus(500);
+    // Envoi d'un message via le webhook Discord
+    axios
+      .post(DISCORD_WEBHOOK, {
+        content: `🔴 **${streamerName}** vient de lancer son live sur Twitch ! Allez le voir ici : https://twitch.tv/${streamerName}`,
+      })
+      .then(() => {
+        console.log("Message envoyé sur Discord");
+      })
+      .catch((error) => {
+        console.error("Erreur lors de l'envoi du message Discord:", error);
+      });
   }
+
+  res.sendStatus(200);
+});
+
+app.get("/check-subscriptions", async (req, res) => {
+  const accessToken = await getOAuthToken();
+  axios
+    .get("https://api.twitch.tv/helix/eventsub/subscriptions", {
+      headers: {
+        "Client-ID": TWITCH_CLIENT_ID,
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    .then((response) => {
+      console.log(response.data);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
 });
 
 app.listen(PORT, () => {
-  console.log("La broche tourne sur https://localhost:3000");
+  console.log("La broche tourne sur http://localhost:3000");
 });
