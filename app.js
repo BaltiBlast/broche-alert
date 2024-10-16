@@ -64,8 +64,6 @@ app.delete("/unsubscribe/:username", async (req, res) => {
 
     if (!userId) {
       return res.status(404).json({ error: "Utilisateur non trouvé." });
-    } else {
-      console.log(`${username} trouvé pour suppréssion`);
     }
 
     const accessToken = await getOAuthToken();
@@ -103,22 +101,17 @@ app.delete("/unsubscribe/:username", async (req, res) => {
   }
 });
 
+// VERFIY CALLBACK
 app.post("/webhooks/callback", (req, res) => {
-  // Vérifier le type de notification
-  const messageType = req.headers["twitch-eventsub-message-type"];
+  console.log("Notification reçue de Twitch:", req.headers);
 
-  // Gérer la validation du challenge
-  if (messageType === "webhook_callback_verification") {
-    console.log("CHALLENGE", req.body.challenge);
-
-    return res.status(200).send(req.body.challenge);
-  }
-
-  // Log des événements reçus
-  console.log("Notification reçue de Twitch:", req.body);
-
-  // Répondre avec un statut 200 pour confirmer la réception
-  res.sendStatus(200);
+  // const messageType = req.headers["twitch-eventsub-message-type"];
+  // if (messageType === "webhook_callback_verification") {
+  //   console.log("Notification reçue de Twitch:", req.body);
+  //   return res.status(200).send(req.body.challenge);
+  // }
+  // console.log("Notification reçue de Twitch:", req.body);
+  // res.sendStatus(200);
 });
 
 app.listen(PORT, () => {
