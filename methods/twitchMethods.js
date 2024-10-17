@@ -1,10 +1,14 @@
+// ========= IMPORTS ========= //
+// npm
 const axios = require("axios");
 require("dotenv").config();
 
+// ========= CONFIG ========= //
 const { TWITCH_CLIENT_ID, TWITCH_CLIENT_SECRET } = process.env;
 
-const methods = {
-  // ---------------------------------------------------------------------- //
+// ========= METHODS ========= //
+const twitchMethods = {
+  // ---------------------------------------------------------------------------------------------------------------------------------- //
   // AUTHENTICATION TO TWITCH APP
   getOAuthToken: async () => {
     const response = await axios.post("https://id.twitch.tv/oauth2/token", null, {
@@ -17,7 +21,7 @@ const methods = {
     return response.data.access_token;
   },
 
-  // ---------------------------------------------------------------------- //
+  // ---------------------------------------------------------------------------------------------------------------------------------- //
   // GET USER ID BY USERNAME
   getTwitchUserId: async (username) => {
     try {
@@ -42,7 +46,7 @@ const methods = {
     }
   },
 
-  // ---------------------------------------------------------------------- //
+  // ---------------------------------------------------------------------------------------------------------------------------------- //
   // GET USER DATA BY ID
   getUserInfo: async (userId) => {
     const accessToken = await getOAuthToken();
@@ -63,6 +67,8 @@ const methods = {
     }
   },
 
+  // ---------------------------------------------------------------------------------------------------------------------------------- //
+  // GET STREAM DATA BY USER ID
   getStreamInfo: async (userId) => {
     const accessToken = await getOAuthToken();
     try {
@@ -79,6 +85,8 @@ const methods = {
     }
   },
 
+  // ---------------------------------------------------------------------------------------------------------------------------------- //
+  // GET CATEGORY DATA BY GAME ID
   getCategorieInfo: async (gameId) => {
     const accessToken = await getOAuthToken();
     try {
@@ -96,6 +104,6 @@ const methods = {
   },
 };
 
-const { getOAuthToken } = methods;
+const { getOAuthToken } = twitchMethods;
 
-module.exports = methods;
+module.exports = twitchMethods;

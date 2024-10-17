@@ -1,18 +1,18 @@
-// ### IMPORTS ### //
+// ========= IMPORTS ========= //
 // npm
 const express = require("express");
 const router = require("./router");
 const bodyParser = require("body-parser");
 
-// config
+// ========= CONFIG ========= //
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ### MIDDLEWARES ### //
+// ========= MIDDLEWARES ========= //
 app.use(bodyParser.json());
 app.use(router);
 
-// ### SERVER ### //
+// ========= SERVER ========= //
 app.listen(PORT, () => {
   console.log("La broche tourne sur http://localhost:3000");
 });
