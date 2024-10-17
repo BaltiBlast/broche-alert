@@ -252,6 +252,7 @@ const twitchMethods = {
   // DISCORD EMBED MESSAGE TO SEND
   discordEmbedMessage: (display_name, title, name, urlCategoriePicture, profile_image_url) => {
     const discordEmbed = {
+      content: "@everyone",
       title: `${display_name} est en live !`,
       description: title,
       color: null,
