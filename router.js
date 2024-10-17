@@ -5,7 +5,7 @@ const axios = require("axios");
 require("dotenv").config();
 
 // local
-const { getOAuthToken, getTwitchUserId, getUserInfo } = require("./methods");
+const { getOAuthToken, getTwitchUserId, getUserInfo, getStreamInfo, getCategorieInfo } = require("./methods");
 
 // config
 const { TWITCH_CLIENT_ID, TWITCH_EVENTSUB_URL, TWITCH_CALLBACK_URL, TWITCH_SECRET, DISCORD_WEBHOOK } = process.env;
@@ -82,82 +82,16 @@ router.post("/webhooks/callback", async (req, res) => {
 
   // Si une personne lance un live
   if (messageType === "notification" && req.body.subscription.type === "stream.online") {
-    const streamerId = req.body.event.broadcaster_user_id;
-    const streamerName = req.body.event.broadcaster_user_name;
+    const userId = req.body.event.broadcaster_user_id;
 
-    // Récupérer les informations de l'utilisateur
-    const user = await getUserInfo(streamerId);
+    const userData = await getUserInfo(userId);
+    console.log("USER INFO RECU ✅ :", userData);
 
-    // Si l'utilisateur est trouvé
-    if (user) {
-      const accessToken = await getOAuthToken(); // Obtenez le token OAuth ici
+    const streamData = await getStreamInfo(userId);
+    console.log("STREAM INFO RECU ✅ :", streamData);
 
-      // Récupérer les informations du stream
-      const streamResponse = await axios.get(`https://api.twitch.tv/helix/streams?user_id=${streamerId}`, {
-        headers: {
-          "Client-ID": TWITCH_CLIENT_ID,
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      // Extraire les informations de stream
-      const streamData = streamResponse.data.data[0];
-      console.log("STREAM DATA", streamData);
-
-      const { title, game_id, thumbnail_url } = streamData;
-
-      // Récupérer les informations de la catégorie
-      let categoryImage = "";
-      let categoryName = "";
-      if (game_id) {
-        const categoryResponse = await axios.get(`https://api.twitch.tv/helix/games?id=${game_id}`, {
-          headers: {
-            "Client-ID": TWITCH_CLIENT_ID,
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        const categoryData = categoryResponse.data.data[0];
-        categoryImage = categoryData.box_art_url.replace("{width}", "300").replace("{height}", "400") || ""; // Remplacer par une taille d'image plus grande
-        categoryName = categoryData.name || "Inconnu"; // Nom de la catégorie
-      }
-
-      // Envoi d'un message via le webhook Discord
-      const embed = {
-        title: title,
-        description: `**${streamerName}** est est en live !`,
-        author: {
-          name: streamerName,
-          icon_url: user.profile_image_url,
-        },
-        fields: [
-          {
-            name: "Category",
-            value: categoryName,
-            inline: true,
-          },
-          {
-            name: "Stream",
-            value: `https://twitch.tv/${streamerName}`,
-            inline: true,
-          },
-        ],
-        image: {
-          url: thumbnail_url,
-        },
-        footer: {
-          text: "In kebab we trust - Made by Balti",
-        },
-      };
-
-      try {
-        await axios.post(DISCORD_WEBHOOK, { embeds: [embed] });
-        console.log("Message envoyé sur Discord");
-      } catch (error) {
-        console.error("Erreur lors de l'envoi du message Discord:", error);
-      }
-    } else {
-      console.error("Utilisateur non trouvé.");
-    }
+    const categorieData = await getCategorieInfo(streamData.game_id);
+    console.log("CATEGORIE INFO RECU ✅ :", categorieData);
   }
 
   res.sendStatus(200);
