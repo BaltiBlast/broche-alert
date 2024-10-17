@@ -13,7 +13,10 @@ const { getCheckSubscriptions } = getTwitchControllers;
 const deleteTwitchControllers = require("./controllers/twitchControllers/deleteTwitchControllers.js");
 const { unsubscribeWebhook } = deleteTwitchControllers;
 
+const fakeDataStreamers = require("./utils/fakeDataStreamer.js");
+
 // ========= ROUTES ========= //
+// --- TWITCH --- //
 // -- GET
 router.get("/check-subscriptions", getCheckSubscriptions);
 
@@ -23,5 +26,14 @@ router.post("/webhooks/callback", webhookCallback);
 
 // -- DELETE
 router.delete("/unsubscribe/:username", unsubscribeWebhook);
+
+// --- APP --- //
+router.get("/live-alerts", (req, res) => {
+  res.render("liveAlerts", { streamers: fakeDataStreamers });
+});
+
+router.get("/signin", (req, res) => {
+  res.render("signin");
+});
 
 module.exports = router;

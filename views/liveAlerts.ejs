@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <main class="container">
+      <!-- ---------------------------------------------- -->
+      <!-- FORM TO ADD ALERTS -->
+      <form>
+        <fieldset role="group">
+          <input type="email" name="email" placeholder="Streamer name" autocomplete="email" />
+          <input type="submit" value="Add Discord alert" />
+        </fieldset>
+      </form>
+
+      <!-- ---------------------------------------------- -->
+      <!-- CARD USER  -->
+      <% streamers.forEach(streamer => { %>
+      <article>
+        <div class="card-container">
+          <img src="<%= streamer.profilePicture %>" alt="Profil de <%= streamer.username %>" class="card-image" />
+
+          <div class="card-info">
+            <h2><%= streamer.username %></h2>
+            <p>Nombre de streams : <%= streamer.streamCount %></p>
+            <p>Jeu préféré : <%= streamer.favoriteGame %></p>
+            <p class="gradient-text">⭐ <%= streamer.favoriteGame %></p>
+          </div>
+
+          <a href="#" class="delete-button contrast">Supprimer alerte</a>
+        </div>
+      </article>
+      <% }) %>
+    </main>
+  </body>
+
+  <style>
+    .card-container {
+      display: flex;
+      align-items: flex-start;
+      position: relative;
+    }
+    .card-image {
+      width: 250px;
+      margin-right: 1rem;
+      object-fit: cover;
+    }
+    .card-info {
+      flex-direction: column;
+    }
+    .delete-button {
+      color: #f06048;
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+    }
+    .gradient-text {
+      font-size: 1.3rem;
+      font-weight: bold;
+      background: linear-gradient(90deg, #ff7e5f, #feb47b, #86a8e7, #91eae4);
+      background-size: 400%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 8s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+  </style>
+</html>

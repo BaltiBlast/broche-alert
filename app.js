@@ -9,6 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ========= MIDDLEWARES ========= //
+app.set("view engine", "ejs");
 app.use(bodyParser.json());
 app.use(router);
 
