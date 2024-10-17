@@ -84,14 +84,53 @@ router.post("/webhooks/callback", async (req, res) => {
   if (messageType === "notification" && req.body.subscription.type === "stream.online") {
     const userId = req.body.event.broadcaster_user_id;
 
+    // user data
     const userData = await getUserInfo(userId);
-    console.log("USER INFO RECU ✅ :", userData);
+    const { display_name, profile_image_url } = userData;
 
+    // stream data
     const streamData = await getStreamInfo(userId);
-    console.log("STREAM INFO RECU ✅ :", streamData);
+    const { title } = streamData;
 
+    // categorie data
     const categorieData = await getCategorieInfo(streamData.game_id);
-    console.log("CATEGORIE INFO RECU ✅ :", categorieData);
+    const { name, box_art_url } = categorieData;
+
+    const urlCategoriePicture = box_art_url.replace("{width}", "285").replace("{height}", "380");
+
+    const discordEmbed = {
+      title: `${display_name} est en live !`,
+      description: title,
+      color: null,
+      fields: [
+        {
+          name: "",
+          value: `[Regarder le stream](https://twitch.tv/${display_name})`,
+        },
+        {
+          name: "",
+          value: name,
+          inline: true,
+        },
+      ],
+      footer: {
+        text: "In kebab we trust - Made by Balti",
+      },
+      image: {
+        url: urlCategoriePicture,
+      },
+      thumbnail: {
+        url: profile_image_url,
+      },
+      attachments: [],
+    };
+
+    try {
+      await axios.post(DISCORD_WEBHOOK, { embeds: [discordEmbed] });
+      console.log("Message envoyé sur Discord");
+    } catch (error) {
+      console.error("Erreur lors de l'envoi du message Discord:", error);
+    }
   }
 
   res.sendStatus(200);
