@@ -31,4 +31,7 @@ replace `USERNAME` by the username of the twitch user
 - VERIFY IF WEBHOKK SUBSCRIPTION IS ENABLED
   `curl -X GET http://localhost:3000/check-subscriptions`
 
--> It's free and it'll stay free!
+It's free and it'll stay free!
+
+In Kebab We trust - Made By Balti
+🟣 TWITCH : balti_blast 🟣
