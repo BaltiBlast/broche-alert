@@ -30,3 +30,6 @@ replace `USERNAME` by the username of the twitch user
 
 - VERIFY IF WEBHOKK SUBSCRIPTION IS ENABLED
   `curl -X GET http://localhost:3000/check-subscriptions`
+
+In Kebab We trust - Made By Balti 
+🟣 TWITCH : balti_blast 🟣
