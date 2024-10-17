@@ -41,6 +41,28 @@ const methods = {
       console.error("Erreur lors de la récupération de l'ID utilisateur:", error.response?.data || error.message);
     }
   },
+
+  // ---------------------------------------------------------------------- //
+  // GET USER DATA BY ID
+  getUserInfo: async (userId) => {
+    try {
+      const accessToken = await getOAuthToken();
+      const response = await axios.get("https://api.twitch.tv/helix/users", {
+        params: {
+          id: userId,
+        },
+        headers: {
+          "Client-ID": TWITCH_CLIENT_ID,
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      console.log(response.data.data[0]);
+      return response.data.data[0];
+    } catch (error) {
+      console.error("Erreur lors de la récupération des informations utilisateur:", error);
+    }
+  },
 };
 
 const { getOAuthToken } = methods;
