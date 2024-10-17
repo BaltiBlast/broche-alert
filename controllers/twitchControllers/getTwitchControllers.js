@@ -1,28 +1,23 @@
 // ### IMPORTS ### //
-// npm
-const axios = require("axios");
-require("dotenv").config();
-
 // local
-const { getOAuthToken } = require("../../methods/twitchMethods.js");
+const { getAllSubscriptions } = require("../../methods/twitchMethods.js");
 
 const getTwitchControllers = {
+  // ---------------------------------------------------------------------------------------------------------------------------------- //
   getCheckSubscriptions: async (req, res) => {
-    // ---------------------------------------------------------------------------------------------------------------------------------- //
-    const accessToken = await getOAuthToken();
-    axios
-      .get("https://api.twitch.tv/helix/eventsub/subscriptions", {
-        headers: {
-          "Client-ID": TWITCH_CLIENT_ID,
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
+    try {
+      const usersSubscriptions = await getAllSubscriptions();
+      usersSubscriptions.forEach(async (data) => {
+        if (data.status === "enabled") {
+          console.log(`L'eventsub ${data.type} pour ${data.user} est ${data.status} ✅`);
+        } else {
+          console.log(`L'eventsub ${data.type} pour ${data.user} est ${data.status} ❌`);
+        }
       });
+      res.status(200).json({ message: "Vérification des abonnements terminée" });
+    } catch (error) {
+      res.status(500).json({ error: "Erreur lors de la récupération des abonnements." });
+    }
   },
 };
 
