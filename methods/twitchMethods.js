@@ -242,7 +242,7 @@ const twitchMethods = {
 
       const message = discordEmbedMessage(display_name, title, name, urlCategoriePicture, profile_image_url);
 
-      await axios.post(DISCORD_WEBHOOK, { embeds: [message] });
+      await axios.post(DISCORD_WEBHOOK, { embeds: [message], content: "@everyone" });
     } catch (error) {
       console.error("Erreur lors de l'envoi du message sur Discord :", error.response || error.message);
     }
@@ -252,7 +252,6 @@ const twitchMethods = {
   // DISCORD EMBED MESSAGE TO SEND
   discordEmbedMessage: (display_name, title, name, urlCategoriePicture, profile_image_url) => {
     const discordEmbed = {
-      content: "@everyone",
       title: `${display_name} est en live !`,
       description: title,
       color: null,
