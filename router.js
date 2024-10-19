@@ -20,10 +20,10 @@ const { unsubscribeWebhook } = deleteTwitchControllers;
 
 // -- AUTH -- //
 const postAuthControllers = require("./controllers/authControllers/postAuthControllers.js");
-const { postSignin, logout } = postAuthControllers;
+const { postSignin, postRegister, logout } = postAuthControllers;
 
 const getAuthControllers = require("./controllers/authControllers/getAuthControllers.js");
-const { getSignin } = getAuthControllers;
+const { getSignin, getRegister } = getAuthControllers;
 
 const fakeDataStreamers = require("./utils/fakeDataStreamer.js");
 
@@ -41,8 +41,9 @@ router.get("/live-alerts", isUserAuthenticated, (req, res) => {
 
 // -- AUTH -- //
 router.get("/signin", getSignin);
-
+router.get("/register", getRegister);
 router.get("/logout", logout);
+router.post("/register", postRegister);
 
 // -- POST
 router.post("/signin", postSignin);

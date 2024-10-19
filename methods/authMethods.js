@@ -1,9 +1,9 @@
 // ========= IMPORTS ========= //
 // npm
-const { signInWithEmailAndPassword } = require("firebase/auth");
+const { signInWithEmailAndPassword, createUserWithEmailAndPassword } = require("firebase/auth");
 
 // local
-const { auth } = require("../services/config.js");
+const { db, auth } = require("../services/config.js");
 
 // ========= CONFIG ========= //
 
@@ -12,13 +12,34 @@ const authMethods = {
   // ---------------------------------------------------------------------------------------------------------------------------------- //
   // CHECK USER CREDENTIAL VALIDITY FOR SIGNIN
   isUserCredentialsOk: async (email, password) => {
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = { userEmail: userCredential.user.email, uid: userCredential.user.uid };
-      return user;
-    } catch (error) {
-      console.error("Erreur lors de la connexion", error.message);
-    }
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = { userEmail: userCredential.user.email, userId: userCredential.user.uid };
+    return user;
+  },
+
+  // ---------------------------------------------------------------------------------------------------------------------------------- //
+  // REGISTER NEW USER IN FIREBASE AUTH
+  registerNewUser: async (email, password) => {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    return userCredential;
+  },
+
+  // ---------------------------------------------------------------------------------------------------------------------------------- //
+  // REGISTER USER INFO IN AIRTABLE
+  registerUserInformationsInAirtable: async (objectUserInfo) => {
+    const { id, lastname, firstname, username, email, birthdate } = objectUserInfo;
+    await db("users").create([
+      {
+        fields: {
+          id: id,
+          lastname: lastname,
+          firstname: firstname,
+          username: username,
+          email: email,
+          birthdate: birthdate,
+        },
+      },
+    ]);
   },
 };
 

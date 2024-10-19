@@ -15,10 +15,13 @@
         </li>
       </ul>
       <ul>
+        <% if (locals.user && locals.user.userEmail) { %>
         <li><i> <%= locals.user.userEmail %> </i></li>
+        <% } %>
         <li><a href="/widget">Widget</a></li>
         <li><a href="/logout">Déconnexion</a></li>
       </ul>
     </nav>
     <% } %>
-
+  </body>
+</html>

@@ -1,0 +1,48 @@
+<%- include('partials/head.ejs') %>
+
+    <style>
+        .form-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        form {
+            width: 1000px;
+            /* Limite la largeur du formulaire */
+            padding: 1rem;
+            border-radius: 8px;
+        }
+    </style>
+
+    <div class="form-container">
+        <form action="/register" method="POST">
+            <label for="firstname">First Name</label>
+            <input type="text" id="firstname" name="firstname" required>
+          
+            <label for="lastname">Last Name</label>
+            <input type="text" id="lastname" name="lastname" required>
+          
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+          
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+          
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+          
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required>
+          
+            <label for="birthdate">Birth Date</label>
+            <input type="date" id="birthdate" name="birthdate" required>
+          
+            <button type="submit">Register</button>
+          </form>
+          
+    </div>
+    </body>
+
+    </html>

@@ -1,0 +1,21 @@
+// ========= IMPORTS ========= //
+//npm
+const npmImport = require("yourNpm/import")
+
+// local
+const localImport = require("yourLocal/import")
+
+// ========= CONFIG ========= //
+
+// ========= CONTROLLERS ========= //
+const controllerExemple = {
+  // ---------------------------------------------------------------------------------------------------------------------------------- //
+  // DESCRIPTION CONTROLLER 1
+  controller1: async (req, res) => {},
+
+  // ---------------------------------------------------------------------------------------------------------------------------------- //
+  // DESCRIPTION CONTROLLER 2
+  controller2: async (req, res) => {};
+}
+
+module.exports = controllerExemple;
