@@ -1,18 +1,13 @@
 // ========= IMPORTS ========= //
-// npm
-const { signInWithEmailAndPassword } = require("firebase/auth");
-
 // local
-const { auth } = require("../../services/config.js");
+const { isUserCredentialsOk } = require("../../methods/authMethods.js");
 
 const loginController = {
   // ---------------------------------------------------------------------------------------------------------------------------------- //
   postSignin: async (req, res) => {
     try {
       const { email, password } = req.body;
-
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = { userEmail: userCredential.user.email, uid: userCredential.user.uid };
+      const user = await isUserCredentialsOk(email, password);
 
       req.session.user = user;
       res.redirect("/live-alerts");

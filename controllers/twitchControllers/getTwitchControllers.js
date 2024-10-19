@@ -7,7 +7,7 @@ const getTwitchControllers = {
   getCheckSubscriptions: async (req, res) => {
     try {
       const usersSubscriptions = await getAllSubscriptions();
-      usersSubscriptions.forEach(async (data) => {
+      usersSubscriptions.forEach((data) => {
         if (data.status === "enabled") {
           console.log(`L'eventsub ${data.type} pour ${data.user} est ${data.status} ✅`);
         } else {
