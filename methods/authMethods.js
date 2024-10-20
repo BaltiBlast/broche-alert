@@ -41,6 +41,21 @@ const authMethods = {
       },
     ]);
   },
+  // ---------------------------------------------------------------------------------------------------------------------------------- //
+  // REGISTER USER INFO IN AIRTABLE
+  getUserInformationsFromAirtable: async (userId) => {
+    const records = await db("users")
+      .select({ filterByFormula: `{id} = "${userId}"` })
+      .all();
+
+    if (records.length === 0) {
+      console.log("Aucun utilisateur trouvé avec cet UID");
+      return null;
+    }
+
+    const userInfo = records[0].fields;
+    return userInfo;
+  },
 };
 
 module.exports = authMethods;

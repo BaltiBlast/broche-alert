@@ -7,19 +7,30 @@
     <title>Live Alerts</title>
   </head>
   <body class="container">
+    <!-- <% const {HOME, SIGNIN, LOGOUT, LIVE_ALERTS, ABOUT} = locals.paths %>  -->
     <% if (typeof showNavbar !== 'undefined' && showNavbar) { %>
     <nav>
       <ul>
         <li>
-          <a href="/"><strong>Twitch Tools</strong></a>
+          <a href="<%= HOME.path %>"><strong><%= HOME.text %></strong></a>
         </li>
       </ul>
+
       <ul>
-        <% if (locals.user && locals.user.userEmail) { %>
-        <li><i> <%= locals.user.userEmail %> </i></li>
+        <!---------------------------------------------------------------------------------------------------->
+        <!-- IF USER IS LOGGED -->
+        <% if (locals.user) { %>
+        <li><i>Welcome <%= locals.user.username %> </i></li>
+        <li>
+          <a href="<%= LIVE_ALERTS.path %>"><%= LIVE_ALERTS.text %></a>
+        </li>
+        <li><a href="<%= LOGOUT.path %>"><%= LOGOUT.text %></a></li>
+
+        <% } else { %>
+        <!---------------------------------------------------------------------------------------------------->
+        <!-- IF USER IS UNLOGGED -->
+        <li><a href="<%= SIGNIN.path %>"><%= SIGNIN.text %></a></li>
         <% } %>
-        <li><a href="/widget">Widget</a></li>
-        <li><a href="/logout">Déconnexion</a></li>
       </ul>
     </nav>
     <% } %>

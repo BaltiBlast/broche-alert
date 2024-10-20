@@ -1,45 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
-
-    <title>Document</title>
-  </head>
+<%- include('partials/head.ejs') %>
+<% const {REGISTER, SIGNIN} = locals.paths %>
 
   <style>
     .form-container {
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
       height: 100vh;
     }
 
     form {
-      width: 1000px; /* Limite la largeur du formulaire */
+      width: 50%;
+      /* Limite la largeur du formulaire */
       padding: 1rem;
       border-radius: 8px;
     }
   </style>
 
-  <body>
-    <div class="form-container">
-      <form method="POST" action="/signin">
-        <article>
-          <div>
-            <input placeholder="email" type="email" id="email" name="email" required />
-          </div>
 
-          <div>
-            <input placeholder="password" type="password" id="password" name="password" required />
-          </div>
+  <div class="form-container">
+    <form method="POST" action="<%= SIGNIN.path %>">
+      <article>
+        <div>
+          <input placeholder="email" type="email" id="email" name="email" required />
+        </div>
 
-          <footer>
-            <button type="submit" class="contrast">Connection</button>
-          </footer>
-        </article>
-      </form>
-    </div>
+        <div>
+          <input placeholder="password" type="password" id="password" name="password" required />
+        </div>
+
+        <footer>
+          <button type="submit" class="contrast">Connection</button>
+        </footer>
+      </article>
+    </form>
+    <p>If you don't have an account, please <a href="<%= REGISTER.path %>"><%= REGISTER.text %>.</a></p>
+  </div>
   </body>
-</html>
+
+  </html>

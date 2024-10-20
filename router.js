@@ -35,6 +35,9 @@ router.post("/webhooks/callback", webhookCallback);
 router.delete("/unsubscribe/:username", unsubscribeWebhook);
 
 // --- APP --- //
+router.get("/", (req, res) => {
+  res.render("home", { showNavbar: true });
+});
 router.get("/live-alerts", isUserAuthenticated, (req, res) => {
   res.render("liveAlerts", { streamers: fakeDataStreamers, showNavbar: true });
 });

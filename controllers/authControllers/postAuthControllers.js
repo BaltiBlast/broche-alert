@@ -4,6 +4,7 @@ const {
   isUserCredentialsOk,
   registerNewUser,
   registerUserInformationsInAirtable,
+  getUserInformationsFromAirtable,
 } = require("../../methods/authMethods.js");
 
 const loginController = {
@@ -13,10 +14,14 @@ const loginController = {
     try {
       const { email, password } = req.body;
       const user = await isUserCredentialsOk(email, password);
+      console.log("USER", user);
+      "USER", user;
 
-      req.session.user = user;
-      res.redirect("/live-alerts");
+      const userData = await getUserInformationsFromAirtable(user.userId);
+      req.session.user = userData;
+      res.redirect("/");
     } catch (error) {
+      console.error("Error during login", error.message);
       res.status(500).json({ error: "Erreur lors de la connexion", message: error.message });
     }
   },

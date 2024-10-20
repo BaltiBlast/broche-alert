@@ -6,7 +6,7 @@ const session = require("express-session");
 require("dotenv").config();
 
 // local
-const { setUserDataGlobal } = require("./methods/middlewares.js");
+const { setUserDataGlobal, setGlobalRoutes } = require("./methods/middlewares.js");
 
 // ========= CONFIG ========= //
 const app = express();
@@ -30,7 +30,9 @@ app.use(
     },
   })
 );
+
 app.use(setUserDataGlobal);
+app.use(setGlobalRoutes);
 app.use(router);
 
 // ========= SERVER ========= //
