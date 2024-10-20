@@ -116,136 +116,114 @@ const twitchMethods = {
   // ---------------------------------------------------------------------------------------------------------------------------------- //
   // GET SUBSCRIPTION TO DELETE
   getSubscriptionToDelete: async (username) => {
-    try {
-      const accessToken = await getOAuthToken();
-      const userId = await getTwitchUserId(username);
+    const accessToken = await getOAuthToken();
+    const userId = await getTwitchUserId(username);
 
-      const response = await axios.get(TWITCH_EVENTSUB_URL, {
-        headers: {
-          "Client-ID": TWITCH_CLIENT_ID,
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      const subscriptions = response.data.data;
-      const subscriptionToDelete = subscriptions.find((sub) => sub.condition.broadcaster_user_id === userId);
+    const response = await axios.get(TWITCH_EVENTSUB_URL, {
+      headers: {
+        "Client-ID": TWITCH_CLIENT_ID,
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-      return subscriptionToDelete;
-    } catch (error) {
-      console.error(
-        "Erreur lors de la récupération de l'abonnement à supprimer :",
-        error.response?.data || error.message
-      );
-    }
+    const subscriptions = response.data.data;
+    const subscriptionToDelete = subscriptions.find((sub) => sub.condition.broadcaster_user_id === userId);
+
+    return subscriptionToDelete;
   },
 
   // ---------------------------------------------------------------------------------------------------------------------------------- //
-  // DELETE SUBSCRIPTION
+  // DELETE SUBSCRIPTION BY ID
   deleteSubscription: async (subscriptionId) => {
-    try {
-      const accessToken = await getOAuthToken();
-      await axios.delete(`${TWITCH_EVENTSUB_URL}?id=${subscriptionId}`, {
-        headers: {
-          "Client-ID": TWITCH_CLIENT_ID,
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-    } catch (error) {
-      console.error("Erreur lors de la suppression de l'abonnement :", error.response?.data || error.message);
-    }
+    const accessToken = await getOAuthToken();
+    await axios.delete(`${TWITCH_EVENTSUB_URL}?id=${subscriptionId}`, {
+      headers: {
+        "Client-ID": TWITCH_CLIENT_ID,
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
   },
 
   // ---------------------------------------------------------------------------------------------------------------------------------- //
   // GET ALL SUBSCRIPTIONS
   getAllSubscriptions: async () => {
-    try {
-      let usersSubscription = [];
-      const accessToken = await getOAuthToken();
+    let usersSubscription = [];
+    const accessToken = await getOAuthToken();
 
-      const response = await axios.get("https://api.twitch.tv/helix/eventsub/subscriptions", {
-        headers: {
-          "Client-ID": TWITCH_CLIENT_ID,
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+    const response = await axios.get("https://api.twitch.tv/helix/eventsub/subscriptions", {
+      headers: {
+        "Client-ID": TWITCH_CLIENT_ID,
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-      usersSubscription = await Promise.all(
-        response.data.data.map(async (element) => {
-          const user = await getUserInfo(element.condition.broadcaster_user_id);
+    usersSubscription = await Promise.all(
+      response.data.data.map(async (element) => {
+        const user = await getUserInfo(element.condition.broadcaster_user_id);
 
-          return {
-            user: user.display_name,
-            type: element.type,
-            status: element.status,
-          };
-        })
-      );
+        return {
+          user: user.display_name,
+          type: element.type,
+          status: element.status,
+        };
+      })
+    );
 
-      return usersSubscription;
-    } catch (error) {
-      console.error("Erreur lors de la récupération des abonnements :", error.response?.data || error.message);
-    }
+    return usersSubscription;
   },
 
   // ---------------------------------------------------------------------------------------------------------------------------------- //
   // SUBSCRIBE TWITCH EVENT - STREAM ONLINE BY USERNAME
   subscriptionToStreamOnline: async (username) => {
-    try {
-      const userId = await getTwitchUserId(username);
-      const accessToken = await getOAuthToken();
+    const userId = await getTwitchUserId(username);
+    const accessToken = await getOAuthToken();
 
-      const response = await axios.post(
-        TWITCH_EVENTSUB_URL,
-        {
-          type: "stream.online",
-          version: "1",
-          condition: {
-            broadcaster_user_id: userId,
-          },
-          transport: {
-            method: "webhook",
-            callback: TWITCH_CALLBACK_URL,
-            secret: TWITCH_SECRET,
-          },
+    const response = await axios.post(
+      TWITCH_EVENTSUB_URL,
+      {
+        type: "stream.online",
+        version: "1",
+        condition: {
+          broadcaster_user_id: userId,
         },
-        {
-          headers: {
-            "Client-ID": TWITCH_CLIENT_ID,
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+        transport: {
+          method: "webhook",
+          callback: TWITCH_CALLBACK_URL,
+          secret: TWITCH_SECRET,
+        },
+      },
+      {
+        headers: {
+          "Client-ID": TWITCH_CLIENT_ID,
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-      return response.data;
-    } catch (error) {
-      console.error("Erreur lors de l'inscription à EventSub:", error.response || error.message);
-    }
+    return response.data;
   },
 
   // ---------------------------------------------------------------------------------------------------------------------------------- //
   // SEND NOTIFICATION TO DISCORD WHEN STREAM ONLINE WITH DISCORD WEBHOOK
   sendMessageToDiscord: async (userId) => {
-    try {
-      // user data
-      const userData = await getUserInfo(userId);
-      const { display_name, profile_image_url } = userData;
+    // user data
+    const userData = await getUserInfo(userId);
+    const { display_name, profile_image_url } = userData;
 
-      // stream data
-      const streamData = await getStreamInfo(userId);
-      const { title } = streamData;
+    // stream data
+    const streamData = await getStreamInfo(userId);
+    const { title } = streamData;
 
-      // categorie data
-      const categorieData = await getCategorieInfo(streamData.game_id);
-      const { name, box_art_url } = categorieData;
+    // categorie data
+    const categorieData = await getCategorieInfo(streamData.game_id);
+    const { name, box_art_url } = categorieData;
 
-      const urlCategoriePicture = box_art_url.replace("{width}", "285").replace("{height}", "380");
+    const urlCategoriePicture = box_art_url.replace("{width}", "285").replace("{height}", "380");
 
-      const message = discordEmbedMessage(display_name, title, name, urlCategoriePicture, profile_image_url);
+    const message = discordEmbedMessage(display_name, title, name, urlCategoriePicture, profile_image_url);
 
-      await axios.post(DISCORD_WEBHOOK, { embeds: [message], content: "@everyone" });
-    } catch (error) {
-      console.error("Erreur lors de l'envoi du message sur Discord :", error.response || error.message);
-    }
+    await axios.post(DISCORD_WEBHOOK, { embeds: [message], content: "@everyone" });
   },
 
   // ---------------------------------------------------------------------------------------------------------------------------------- //

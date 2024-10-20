@@ -7,9 +7,7 @@ const deleteTwitchControllers = {
   // ---------------------------------------------------------------------------------------------------------------------------------- //
   unsubscribeWebhook: async (req, res) => {
     const username = req.params.username;
-
     try {
-      // Get the subscription to delete
       const subscriptionToDelete = await getSubscriptionToDelete(username);
 
       if (!subscriptionToDelete) {
@@ -17,11 +15,12 @@ const deleteTwitchControllers = {
       }
 
       const subscriptionId = subscriptionToDelete.id;
-
-      // Delete the subscription
       await deleteSubscription(subscriptionId);
+
+      console.log(`Abonnement supprimé pour l'utilisateur ${username}.`);
       res.status(200).json({ message: `Abonnement supprimé pour l'utilisateur ${username}.` });
     } catch (error) {
+      console.error("Erreur lors de la suppression de l'abonnement :", error.response?.data || error.message);
       res.status(500).json({ error: "Erreur lors de la suppression de l'abonnement.", message: error.message });
     }
   },

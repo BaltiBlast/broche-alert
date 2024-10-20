@@ -14,6 +14,7 @@ const postTwitchControllers = {
 
       res.status(202).json({ message: "Abonnement à EventSub réussi", data: subscribe.data });
     } catch (error) {
+      console.error("Erreur lors de l'inscription à EventSub :", error.response?.data || error.message);
       res.status(500).json({ error: "Erreur lors de l'inscription à EventSub" });
     }
   },
@@ -39,7 +40,7 @@ const postTwitchControllers = {
         res.sendStatus(200);
       }
     } catch (error) {
-      res.status(500).json({ error: "Erreur lors de la réception du message.", message: error.message });
+      res.status(500).json({ error: "Erreur pendant", message: error.message });
     }
   },
 };
