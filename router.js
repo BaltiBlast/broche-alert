@@ -25,12 +25,14 @@ const { postSignin, postRegister, logout } = postAuthControllers;
 const getAuthControllers = require("./controllers/authControllers/getAuthControllers.js");
 const { getSignin, getRegister } = getAuthControllers;
 
-const fakeDataStreamers = require("./utils/fakeDataStreamer.js");
+// -- VIEWS -- //
+const liveAlertsControllers = require("./controllers/viewsControllers/liveAlertsControllers.js");
+const { getLiveAlerts } = liveAlertsControllers;
 
 // ========= ROUTES ========= //
 // --- TWITCH --- //
 router.get("/check-subscriptions", getCheckSubscriptions);
-router.post("/subscribe-to-live/:username", subscribeToLive);
+router.post("/subscribe-to-live", subscribeToLive);
 router.post("/webhooks/callback", webhookCallback);
 router.delete("/unsubscribe/:username", unsubscribeWebhook);
 
@@ -38,9 +40,7 @@ router.delete("/unsubscribe/:username", unsubscribeWebhook);
 router.get("/", (req, res) => {
   res.render("home", { showNavbar: true });
 });
-router.get("/live-alerts", isUserAuthenticated, (req, res) => {
-  res.render("liveAlerts", { streamers: fakeDataStreamers, showNavbar: true });
-});
+router.get("/live-alerts", isUserAuthenticated, getLiveAlerts);
 
 // -- AUTH -- //
 router.get("/signin", getSignin);

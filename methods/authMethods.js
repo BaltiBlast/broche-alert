@@ -41,6 +41,7 @@ const authMethods = {
       },
     ]);
   },
+
   // ---------------------------------------------------------------------------------------------------------------------------------- //
   // REGISTER USER INFO IN AIRTABLE
   getUserInformationsFromAirtable: async (userId) => {

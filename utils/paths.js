@@ -5,6 +5,7 @@ const routes = {
   LOGOUT: { path: "/logout", text: "logout" },
   LIVE_ALERTS: { path: "/live-alerts", text: "alerts" },
   ABOUT: { path: "/about", text: "about" },
+  DELETE_SUBSCRIPTION: { path: "/unsubscribe/:username", text: "delete" },
 };
 
 module.exports = routes;

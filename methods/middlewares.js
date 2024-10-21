@@ -1,4 +1,7 @@
 // ========= IMPORTS ========= //
+// npm
+const methodOverride = require("method-override");
+
 // local
 const paths = require("../utils/paths.js");
 
@@ -24,6 +27,14 @@ const middlewares = {
     res.locals.paths = { ...paths };
     next();
   },
+
+  customMethodOverride: methodOverride((req, res) => {
+    if (req.body && typeof req.body === "object" && "_method" in req.body) {
+      const method = req.body._method;
+      delete req.body._method; // Supprime le champ _method du corps
+      return method; // Retourne la méthode à utiliser
+    }
+  }),
 };
 
 module.exports = middlewares;

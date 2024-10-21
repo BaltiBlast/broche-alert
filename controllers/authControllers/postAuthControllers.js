@@ -1,11 +1,8 @@
 // ========= IMPORTS ========= //
 // local
-const {
-  isUserCredentialsOk,
-  registerNewUser,
-  registerUserInformationsInAirtable,
-  getUserInformationsFromAirtable,
-} = require("../../methods/authMethods.js");
+const { isUserCredentialsOk, registerNewUser } = require("../../methods/authMethods.js");
+
+const { registerUserInformationsInAirtable, getUserInformationsFromAirtable } = require("../../methods/dbMethods.js");
 
 const loginController = {
   // ---------------------------------------------------------------------------------------------------------------------------------- //
@@ -14,8 +11,6 @@ const loginController = {
     try {
       const { email, password } = req.body;
       const user = await isUserCredentialsOk(email, password);
-      console.log("USER", user);
-      "USER", user;
 
       const userData = await getUserInformationsFromAirtable(user.userId);
       req.session.user = userData;

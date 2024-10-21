@@ -160,11 +160,12 @@ const twitchMethods = {
     usersSubscription = await Promise.all(
       response.data.data.map(async (element) => {
         const user = await getUserInfo(element.condition.broadcaster_user_id);
-
         return {
+          subscriptionId: element.id,
           user: user.display_name,
           type: element.type,
           status: element.status,
+          profilePicture: user.profile_image_url,
         };
       })
     );

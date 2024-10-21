@@ -6,7 +6,7 @@ const session = require("express-session");
 require("dotenv").config();
 
 // local
-const { setUserDataGlobal, setGlobalRoutes } = require("./methods/middlewares.js");
+const { setUserDataGlobal, setGlobalRoutes, customMethodOverride } = require("./methods/middlewares.js");
 
 // ========= CONFIG ========= //
 const app = express();
@@ -19,6 +19,7 @@ app.set("views", "./views");
 // ========= MIDDLEWARES ========= //
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(customMethodOverride);
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -33,6 +34,7 @@ app.use(
 
 app.use(setUserDataGlobal);
 app.use(setGlobalRoutes);
+
 app.use(router);
 
 // ========= SERVER ========= //
