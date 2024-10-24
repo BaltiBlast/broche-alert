@@ -1,4 +1,4 @@
-// ### IMPORTS ### //
+// ========= IMPORTS ========= //
 // local
 const { getAllSubscriptions } = require("../../methods/twitchMethods.js");
 
@@ -6,7 +6,8 @@ const getTwitchControllers = {
   // ---------------------------------------------------------------------------------------------------------------------------------- //
   getCheckSubscriptions: async (req, res) => {
     try {
-      const usersSubscriptions = await getAllSubscriptions();
+      const userId = req.session.userId;
+      const usersSubscriptions = await getAllSubscriptions(userId);
       usersSubscriptions.forEach((data) => {
         if (data.status === "enabled") {
           console.log(`L'eventsub ${data.type} pour ${data.user} est ${data.status} ✅`);

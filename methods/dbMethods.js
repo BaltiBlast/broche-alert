@@ -21,6 +21,22 @@ const dbMethods = {
   },
 
   // ---------------------------------------------------------------------------------------------------------------------------------- //
+  // GET WEBHOOKS BY USER FROM AIRTABLE
+  getUserWebhooks: async (userId) => {
+    const records = await db("webhooks")
+      .select({ filterByFormula: `{userId} = "${userId}"` })
+      .all();
+
+    if (records.length === 0) {
+      console.log("Aucun webhook trouvé pour cet utilisateur");
+      return null;
+    }
+
+    const userWebhooks = records.map((record) => record.fields);
+    return userWebhooks;
+  },
+
+  // ---------------------------------------------------------------------------------------------------------------------------------- //
   // REGISTER USER INFO IN AIRTABLE
   registerUserInformationsInAirtable: async (objectUserInfo) => {
     const { id, lastname, firstname, username, email, birthdate } = objectUserInfo;
@@ -42,7 +58,7 @@ const dbMethods = {
   // REGISTER A NEW LIVE ALERTS SUBSCRIPTION IN AIRTABLE
   registerLiveAlertsSubscriptionInAirtable: async (objectSubscriptionInfo) => {
     const { webhookId, streamerId, streamCount, webhookType, userId } = objectSubscriptionInfo;
-    await db("live-alerts").create([
+    await db("webhooks").create([
       {
         fields: {
           webhookId: webhookId,
@@ -58,7 +74,7 @@ const dbMethods = {
   // ---------------------------------------------------------------------------------------------------------------------------------- //
   // DELETE A LIVE ALERTS SUBSCRIPTION IN AIRTABLE BY WEBHOOK ID
   deleteLiveAlertsSubscriptionInAirtable: async (webhookId) => {
-    const records = await db("live-alerts")
+    const records = await db("webhooks")
       .select({ filterByFormula: `{webhookId} = "${webhookId}"` })
       .all();
 
@@ -68,7 +84,7 @@ const dbMethods = {
     }
 
     const subscriptionToDelete = records[0];
-    await db("live-alerts").destroy(subscriptionToDelete.id);
+    await db("webhooks").destroy(subscriptionToDelete.id);
   },
 };
 

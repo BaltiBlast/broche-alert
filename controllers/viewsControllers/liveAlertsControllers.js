@@ -8,7 +8,8 @@ const liveAlertsControllers = {
   // DESCRIPTION CONTROLLER 1
   getLiveAlerts: async (req, res) => {
     try {
-      const usersSubscription = await getAllSubscriptions();
+      const userId = req.session.user.id;
+      const usersSubscription = await getAllSubscriptions(userId);
 
       res.render("liveAlerts", { streamers: usersSubscription, showNavbar: true });
     } catch (error) {

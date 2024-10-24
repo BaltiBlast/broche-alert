@@ -4,7 +4,7 @@ const axios = require("axios");
 require("dotenv").config();
 
 // local
-const { registerLiveAlertsSubscriptionInAirtable } = require("../methods/dbMethods.js");
+const { registerLiveAlertsSubscriptionInAirtable, getUserWebhooks } = require("../methods/dbMethods.js");
 
 // ========= CONFIG ========= //
 const {
@@ -149,8 +149,9 @@ const twitchMethods = {
 
   // ---------------------------------------------------------------------------------------------------------------------------------- //
   // GET ALL SUBSCRIPTIONS
-  getAllSubscriptions: async () => {
-    let usersSubscription = [];
+  getAllSubscriptions: async (userId) => {
+    let subscriptions = [];
+
     const accessToken = await getOAuthToken();
 
     const response = await axios.get("https://api.twitch.tv/helix/eventsub/subscriptions", {
@@ -160,20 +161,32 @@ const twitchMethods = {
       },
     });
 
-    usersSubscription = await Promise.all(
-      response.data.data.map(async (element) => {
-        const user = await getUserInfo(element.condition.broadcaster_user_id);
-        return {
-          subscriptionId: element.id,
-          user: user.display_name,
-          type: element.type,
-          status: element.status,
-          profilePicture: user.profile_image_url,
-        };
-      })
+    const allWebhooksUser = await getUserWebhooks(userId);
+
+    if (!allWebhooksUser) {
+      console.log("Aucun webhook trouvé pour l'utilisateur connecté.");
+      return [];
+    }
+
+    const userStreamerIds = allWebhooksUser.map((webhook) => webhook.streamerId);
+
+    // Filtrer les subscriptions pour ne garder que celles qui correspondent aux streamerId de l'utilisateur
+    subscriptions = await Promise.all(
+      response.data.data
+        .filter((element) => userStreamerIds.includes(element.condition.broadcaster_user_id))
+        .map(async (element) => {
+          const user = await getUserInfo(element.condition.broadcaster_user_id);
+          return {
+            subscriptionId: element.id,
+            user: user.display_name,
+            type: element.type,
+            status: element.status,
+            profilePicture: user.profile_image_url,
+          };
+        })
     );
 
-    return usersSubscription;
+    return subscriptions;
   },
 
   // ---------------------------------------------------------------------------------------------------------------------------------- //
@@ -204,6 +217,8 @@ const twitchMethods = {
         },
       }
     );
+
+    console.log("RESPONSE SUBSCRIPTION :", response.data);
 
     if (response.data) {
       const objectSubscriptionInfo = {
