@@ -3,6 +3,9 @@
 const axios = require("axios");
 require("dotenv").config();
 
+// local
+const { registerLiveAlertsSubscriptionInAirtable } = require("../methods/dbMethods.js");
+
 // ========= CONFIG ========= //
 const {
   TWITCH_CLIENT_ID,
@@ -175,8 +178,8 @@ const twitchMethods = {
 
   // ---------------------------------------------------------------------------------------------------------------------------------- //
   // SUBSCRIBE TWITCH EVENT - STREAM ONLINE BY USERNAME
-  subscriptionToStreamOnline: async (username) => {
-    const userId = await getTwitchUserId(username);
+  subscriptionToStreamOnline: async (username, userId) => {
+    const streamerId = await getTwitchUserId(username);
     const accessToken = await getOAuthToken();
 
     const response = await axios.post(
@@ -185,7 +188,7 @@ const twitchMethods = {
         type: "stream.online",
         version: "1",
         condition: {
-          broadcaster_user_id: userId,
+          broadcaster_user_id: streamerId,
         },
         transport: {
           method: "webhook",
@@ -202,7 +205,17 @@ const twitchMethods = {
       }
     );
 
-    return response.data;
+    if (response.data) {
+      const objectSubscriptionInfo = {
+        webhookId: response.data.data[0].id,
+        streamerId: streamerId,
+        streamCount: 0,
+        webhookType: response.data.data[0].type,
+        userId: userId,
+      };
+
+      await registerLiveAlertsSubscriptionInAirtable(objectSubscriptionInfo);
+    }
   },
 
   // ---------------------------------------------------------------------------------------------------------------------------------- //

@@ -41,12 +41,15 @@ const dbMethods = {
   // ---------------------------------------------------------------------------------------------------------------------------------- //
   // REGISTER A NEW LIVE ALERTS SUBSCRIPTION IN AIRTABLE
   registerLiveAlertsSubscriptionInAirtable: async (objectSubscriptionInfo) => {
-    const { webhookId, streamerId } = objectSubscriptionInfo;
+    const { webhookId, streamerId, streamCount, webhookType, userId } = objectSubscriptionInfo;
     await db("live-alerts").create([
       {
         fields: {
           webhookId: webhookId,
           streamerId: streamerId,
+          streamCount: streamCount,
+          webhookType: webhookType,
+          userId: userId,
         },
       },
     ]);
