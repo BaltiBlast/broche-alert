@@ -1,0 +1,31 @@
+include partials/head.pug
+
+main.ctr-flx                                
+    - if (successMessage)
+        p(class="txt-ctr success-message")= successMessage
+        
+        
+    div
+        //- ------------------------------------------------------------------------------------------
+        //- TWITCH ALERTS
+        section(class="home__presentation container grid") 
+            div(class="home__presentation__alert-left-side ctr-flx col-flx")
+                h2(class="color-black") Twitch stream alert
+                p Use Discord webhooks to create live alerts for your favorite Twitch streamers. It's free and no limit on usage! 
+                p
+                    a(href=paths.TOOLS.liveAlert) Discover here !
+            div.home__presentation__alert-right-side
+
+        //- ------------------------------------------------------------------------------------------
+        //- ROAD MAP 
+        section(class="home__presentation container grid") 
+            div.home__presentation__roadmap-left-side 
+            div(class="home__presentation__roadmap-right-side ctr-flx col-flx")
+                h2(class="color-black") Functionality to come
+                ul
+                    li Customize stream alert messages
+                    li Live win/loss counter
+                    li Spotify player for live 
+                    li More to come!
+
+include partials/footer.pug

@@ -1,0 +1,66 @@
+include partials/head.pug
+
+//- - console.log("LOCALS: ", locals)
+
+
+main
+    section.container
+        article
+
+            //- Success message
+            - if (successMessage)
+                p(class="txt-ctr success-message")= successMessage
+
+            //- ------------------------------------------------------------------------------------------
+            //- DISCORD WEBHOOK FORM
+            form(action=paths.TOOLS.liveAlert, method='POST')
+
+                    //------- FORM TYPE INPUT
+                    input(type='hidden', name='formType', value="discord")
+
+                    //------- DISCORD WEBHOOK INPUT
+                    div.bline-flx
+                        label(for="discordWebhook") Discord webhook URL
+                        if errors
+                            each error in errors
+                                if error.path === 'discordWebhook'
+                                    small.error-form-message= error.msg
+                    fieldset(role='group')  
+                        input(type='text', name='discordWebhook', placeholder="https://discord.com/api/webhooks/..." value=(formData ? formData.discordWebhook : user.discord_webhook))
+                        
+                        //------- SUBMIT BUTTON
+                        input(type='submit', value="Add") 
+
+
+
+            //- ------------------------------------------------------------------------------------------
+            //- STREAMER ALERT FORM
+            form(action=paths.TOOLS.liveAlert, method='POST')
+
+                    //------- FORM TYPE INPUT
+                    input(type='hidden', name='formType', value="subscription")
+
+                    //------- STREAMER NAME INPUT
+                    div.bline-flx
+                        label(for="streamerName") Streamer name
+                        if errors
+                            each error in errors
+                                if error.path === 'streamerName'
+                                    small.error-form-message= error.msg
+                    fieldset(role='group')
+                        input(type='text', name='streamerName', placeholder='balti_blast')
+
+                        //------- SUBMIT BUTTON
+                        input(type='submit', value="Add") 
+        section.live-alerts__card-container
+            if subscriptions
+                each sub of subscriptions
+                    article.subscription-card
+                        img(src=sub.streamer_profile_image)
+                        h3= sub.streamer_name
+                        form(action=paths.TOOLS.deleteSubscription, method="POST")
+                            input(type="hidden", name="recordId", value=sub.recordId)
+                            input(type="hidden", name="subscriptionId", value=sub.subscription_id)
+                            input(type="submit", value="Delete" class="button-danger")
+
+include partials/footer.pug

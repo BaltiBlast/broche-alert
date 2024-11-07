@@ -1,0 +1,162 @@
+/* ------------------------------------------------------------------------------------ */
+/* === IMPORTS === */
+@import url("./sizes.css");
+@import url("./colors.css");
+
+/* ------------------------------------------------------------------------------------ */
+/* === ELEMENT === */
+
+body,
+html {
+  height: 100%;
+}
+
+.home__presentation {
+  grid-column-gap: 0;
+}
+
+.navbar__logo {
+  margin-right: 12px;
+  width: 24px;
+}
+
+.home__presentation__alert-right-side {
+  background-image: url("/pictures/home-picture-1.jpg");
+  background-position: center;
+  background-size: cover;
+  border-top-right-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+}
+
+.home__presentation__alert-left-side {
+  padding: 48px;
+  background-color: var(--grey-ulra-light);
+  border-top-left-radius: var(--border-radius);
+  border-bottom-left-radius: var(--border-radius);
+}
+
+.home__presentation__roadmap-right-side {
+  padding: 48px;
+  background-color: var(--grey-ulra-light);
+  border-top-right-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+}
+
+.home__presentation__roadmap-left-side {
+  background-image: url("/pictures/roadmap-dev.jpeg");
+  background-position: center;
+  background-size: cover;
+  border-top-left-radius: var(--border-radius);
+  border-bottom-left-radius: var(--border-radius);
+}
+
+main {
+  background-color: var(--grey-light);
+  min-height: 80vh;
+}
+
+hr {
+  width: 100%;
+}
+
+.live-alerts__card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.subscription-card {
+  flex: 1 1 300px;
+  max-width: 300px;
+  padding: 1rem;
+}
+
+/* ------------------------------------------------------------------------------------ */
+/* === FLEX === */
+.ctr-flx {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.col-flx {
+  display: flex;
+  flex-direction: column;
+}
+
+.bline-flx {
+  display: flex;
+  align-items: baseline;
+}
+
+.bline-ctr-flx {
+  display: flex;
+  align-items: center;
+}
+
+/* ------------------------------------------------------------------------------------ */
+/* === BUTTONS === */
+
+.button-danger {
+  background-color: var(--red-danger);
+  border-color: var(--red-danger);
+}
+
+.button-danger:hover {
+  background-color: var(--red-danger-light);
+  border-color: var(--red-danger-light);
+}
+
+/* ------------------------------------------------------------------------------------ */
+/* === TEXTS === */
+
+.txt-ctr {
+  text-align: center;
+}
+
+.color-black {
+  color: var(--black);
+}
+
+.color-white {
+  color: var(--white);
+}
+
+/* ------------------------------------------------------------------------------------ */
+/* === COLORED MESSAGES === */
+.error-form-message {
+  color: var(--red-danger);
+  margin-left: var(--margin-left-10px);
+}
+
+.error-message {
+  color: var(--red-danger);
+}
+
+.success-message {
+  color: var(--green-success);
+}
+
+/* ------------------------------------------------------------------------------------ */
+/* === ANIMATIONS === */
+
+.text-gradient-animated {
+  background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fad0c4, #ff9a9e);
+  background-size: 200% 200%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: pastelGradient 5s ease infinite;
+}
+
+@keyframes pastelGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

@@ -1,0 +1,82 @@
+include partials/head.pug
+
+main.ctr-flx
+    section.container
+        article
+            div.txt-ctr
+                p If you already have an account, please 
+                    a(href=paths.AUTH.signin) Signin
+
+            //- --------------------------------------------------------------------------------------------------------------------
+            //- FORM FOR SIGNUP
+            form(action=paths.AUTH.signup method="POST")
+                //- FIRSTNAME INPUT
+                div.bline-flx
+                    label(for="firstname") First name
+                    if errors
+                        each error in errors
+                            if error.path === 'firstname'
+                                small.error-form-message= error.msg
+                input(type="text" id="firstname" name="firstname" placeholder="Bob" value=(formData ? formData.firstname : ''))
+
+                //------- LASTNAME INPUT
+                div.bline-flx
+                    label(for="lastname") Last Name
+                    if errors
+                        each error in errors
+                            if error.path === 'lastname'
+                                small.error-form-message= error.msg
+                input(type="text" id="lastname" name="lastname" placeholder="Sponge" value=(formData ? formData.lastname : ''))
+
+                //------- USERNAME INPUT
+                div.bline-flx
+                    label(for="username") Username
+                    if errors
+                        each error in errors
+                            if error.path === 'username'
+                                small.error-form-message= error.msg
+                input(type="text" id="username" name="username" placeholder="Spontex Killer" value=(formData ? formData.username : ''))
+
+                //------- EMAIL INPUT
+                div.bline-flx
+                    label(for="email") Email
+                    if errors
+                        each error in errors
+                            if error.path === 'email'
+                                small.error-form-message= error.msg
+                input(type="email" id="email" name="email" placeholder="sponge.b@mail.com" value=(formData ? formData.email : ''))
+
+                //------- PASSWORD INPUT
+                div.bline-flx
+                    label(for="password") Password
+                    if errors
+                        each error in errors
+                            if error.path === 'password'
+                                small.error-form-message= error.msg
+                input(type="password" id="password" name="password")
+
+                //------- CONFIRM PASSWORD INPUT
+                div.bline-flx
+                    label(for="confirmPassword") Confirm Password
+                    if errors
+                        each error in errors
+                            if error.path === 'confirmPassword'
+                                small.error-form-message= error.msg
+                input(type="password" id="confirmPassword" name="confirmPassword")
+
+                //------- BIRTHDATE INPUT
+                div.bline-flx
+                    label(for="birthdate") Birth Date
+                    if errors
+                        each error in errors
+                            if error.path === 'birthdate'
+                                small.error-form-message= error.msg
+                input(type="date" id="birthdate" name="birthdate" value=(formData ? formData.birthdate : ''))
+
+                //------- SUBMIT BUTTON
+                button(type="submit" class="contrast") Register
+
+                p.txt-ctr 
+                    a(href=paths.GENERAL.home class="txt-ctr") Home
+
+include partials/footer.pug

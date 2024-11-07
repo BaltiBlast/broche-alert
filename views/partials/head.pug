@@ -1,0 +1,62 @@
+doctype html
+html
+  head
+    title Broche tools
+    meta(charset='UTF-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    
+    //- Styles
+    link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css")
+    link(rel="stylesheet" href="/css/styles.css")
+
+//- - console.log("LOCALS", locals)
+
+body
+    header.container
+        nav
+            ul
+                li
+                    a(class="bline-ctr-flx color-white" href=paths.GENERAL.home)
+                        img(src="/pictures/broche-tools-logo.svg" class="navbar__logo" alt="Broche Tools logo")
+                        strong Broche tools
+            
+
+            ul
+                //- --------------------------------------------------------------------------------------------------------------------
+                //- USER MENU LOGGED    
+                - if (user)
+                    li(class="text-gradient-animated") Hello #{user.username}
+                    li
+                        details.dropdown
+                            summary Menu
+                            ul
+                                li
+                                    a(href=paths.USER.profil.replace(":username", user.username.toLowerCase())) Profil
+                                li
+                                    a(href=paths.TOOLS.liveAlert) Live Alert
+                                //- hr 
+                                //- li
+                                //-     a(href=paths.GENERAL.about) About
+                                //- li
+                                //-     a(href=paths.GENERAL.contact) Contact
+                                hr
+                                li
+                                    a(href=paths.AUTH.signout) Signout
+                                    
+                //- --------------------------------------------------------------------------------------------------------------------
+                //- USER MENU LOGGED  
+                - else
+
+                    li
+                        a(class="color-white" href=paths.AUTH.signin) Signin
+                    li
+                        details.dropdown
+                            summary Menu
+                            ul
+                                li
+                                    a(href=paths.AUTH.signup) Signup
+                                hr
+                                li
+                                    a(href=paths.GENERAL.contact) Contact
+                                //- li
+                                //-     a(href=paths.GENERAL.about) About
