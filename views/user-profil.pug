@@ -1,0 +1,80 @@
+include partials/head.pug
+
+main.ctr-flx
+    section.container
+        //- User profile
+        h2.txt-ctr Welcome to your profil #{user.username}
+
+        article
+            //- Success message
+            - if (successMessage)
+                p(class="txt-ctr success-message")= successMessage
+
+            //- --------------------------------------------------------------------------------------------------------------------
+            //- UPDATE PROFILE FORM
+            form(action=paths.USER.updateProfil method="POST" )
+
+                //------- FIRSTNAME INPUT
+                div.bline-flx
+                    label(for="firstname") First name
+                    if errors
+                        each error in errors
+                            if error.path === 'firstname'
+                                small.error-form-message= error.msg
+                input(type="text" id="firstname" name="firstname" value=(formData ? formData.firstname : user.first_name))
+
+                //------- LASTNAME INPUT
+                div.bline-flx
+                    label(for="lastname") Last Name
+                    if errors
+                        each error in errors
+                            if error.path === 'lastname'
+                                small.error-form-message= error.msg
+                input(type="text" id="lastname" name="lastname" value=(formData ? formData.lastname : user.last_name))
+
+                //------- USERNAME INPUT
+                div.bline-flx
+                    label(for="username") Username
+                    if errors
+                        each error in errors
+                            if error.path === 'username'
+                                small.error-form-message= error.msg
+                input(type="text" id="username" name="username" value=(formData ? formData.username : user.username))
+
+                //------- EMAIL INPUT
+                div.bline-flx
+                    label(for="email") Email
+                    if errors
+                        each error in errors
+                            if error.path === 'email'
+                                small.error-form-message= error.msg
+                input(type="email" id="email" name="email" value=(formData ? formData.email : user.email))
+
+                //------- BIRTHDATE INPUT
+                div.bline-flx
+                    label(for="birthdate") Birth Date
+                    if errors
+                        each error in errors
+                            if error.path === 'birthdate'
+                                small.error-form-message= error.msg
+                input(type="date" id="birthdate" name="birthdate" value=(formData ? formData.birthdate : user.birthdate))
+
+                //------- RECORD ID
+                input(type="hidden" name="recordId" value=user.recordId)
+                input(type="hidden" name="updateType" value="userProfil")
+
+                //------- SUBMIT BUTTON
+                button(type="submit") Update Profile
+
+        article
+            //- --------------------------------------------------------------------------------------------------------------------
+            //- DELETE PROFILE FORM
+            form(action=paths.USER.deleteProfil method="POST")
+
+                //------- RECORD ID
+                input(type="hidden" name="recordId" value=recordId)
+
+                //------- SUBMIT BUTTON
+                button(type="submit" class="button-danger") Delete Account
+
+include partials/footer.pug

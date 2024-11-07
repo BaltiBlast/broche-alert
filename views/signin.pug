@@ -1,0 +1,42 @@
+include partials/head.pug
+
+main.ctr-flx
+    section.container
+        article
+            - if (successMessage)
+                p(class="txt-ctr success-message")= successMessage
+            - if (errorMessage)
+                p(class="txt-ctr error-message")= errorMessage
+            
+            //- --------------------------------------------------------------------------------------------------------------------
+            //- SIGNIN FORM
+            form(method="POST", action=paths.AUTH.signin)
+
+                //------- EMAIL INPUT
+                div.bline-flx
+                    label(for="email") Email
+                    if errors
+                        each error in errors
+                            if error.path === 'email'
+                                small.error-form-message= error.msg
+                input(type="text" id="email" name="email" placeholder="Your email" value=(formData ? formData.email : null))
+
+                //------- PASSWORD INPUT
+                div.bline-flx
+                    label(for="password") Password
+                    if errors
+                        each error in errors
+                            if error.path === 'password'
+                                small.error-form-message= error.msg
+                input(type="password" id="password" name="password" placeholder="Your password" value=(formData ? formData.password : ''))
+
+                //------- SUBMIT BUTTON
+                button.contrast(type="submit") Connection
+                div.txt-ctr
+                    a(href=paths.USER.resetPassword)
+                        small Forgot your password ? 
+                div.txt-ctr
+                    small No account yet ? Please 
+                        a(href=paths.AUTH.signup) Signup
+
+include partials/footer.pug

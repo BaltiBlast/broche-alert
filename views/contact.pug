@@ -1,0 +1,45 @@
+include partials/head.pug
+
+main.ctr-flx
+    section.container
+        article
+            //- --------------------------------------------------------------------------------------------------------------------
+            //- CONTACT FORM
+            form(action=paths.GENERAL.contact method="POST" )
+
+                //------- SUBJECT DROPDOWN    
+                div.bline-flx
+                    label(for="subject") Subject
+                    if errors
+                        each error in errors
+                            if error.path === 'subject'
+                                small.error-form-message= error.msg
+                select(id="subject" name="subject" aria-label="Select" )
+                    option(selected disabled value="") -
+                    option(value="bug") Bug
+                    option(value="idea") Idea
+
+                //------- EMAIL INPUT
+                div.bline-flx
+                    label(for="email") Email
+                    if errors
+                        each error in errors
+                            if error.path === 'email'
+                                small.error-form-message= error.msg
+                input(type="text" id="email" name="email" placeholder="Your email" value=(formData ? formData.email : null))
+
+                //------- SUBJECT DROPDOWN    
+                div.bline-flx
+                    label(for="message") Message
+                    if errors
+                        each error in errors
+                            if error.path === 'message'
+                                small.error-form-message= error.msg
+                textarea(id="message" name="message" placeholder="What do you want to tell me ?" aria-label="message" rows="7")
+
+                //------- SUBMIT BUTTON
+                button(type="submit") Send Message
+                p.txt-ctr 
+                    a(href=paths.GENERAL.home class="txt-ctr") Home
+
+include partials/footer.pug

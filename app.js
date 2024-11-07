@@ -1,25 +1,27 @@
-// ========= IMPORTS ========= //
+// -------------------------------------------------------------------------------------------------------------------- //
+// ===== IMPORTS ===== //
 // npm
 const express = require("express");
-const router = require("./router");
 const session = require("express-session");
 require("dotenv").config();
 
 // local
-const { setUserDataGlobal, setGlobalRoutes, customMethodOverride } = require("./methods/middlewares.js");
+const router = require("./router");
+const { genericPaths, successMessage, errorMessage, storeUserInLocals } = require("./utils/middlewares");
 
-// ========= CONFIG ========= //
+// -------------------------------------------------------------------------------------------------------------------- //
+// ===== SETUP ===== //
 const app = express();
-const PORT = process.env.PORT || 3000;
-
-// ========= VIEW ENGINE ========= //
-app.set("view engine", "ejs");
+const PORT = 3000;
+app.set("view engine", "pug");
 app.set("views", "./views");
 
-// ========= MIDDLEWARES ========= //
-app.use(express.json());
+// -------------------------------------------------------------------------------------------------------------------- //
+// ===== MIDDLEWARES ===== //
+app.use(express.static("public"));
+app.use(genericPaths);
 app.use(express.urlencoded({ extended: true }));
-app.use(customMethodOverride);
+app.use(express.json());
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -31,13 +33,12 @@ app.use(
     },
   })
 );
-
-app.use(setUserDataGlobal);
-app.use(setGlobalRoutes);
-
+app.use(storeUserInLocals);
+app.use(successMessage, errorMessage);
 app.use(router);
 
-// ========= SERVER ========= //
+// -------------------------------------------------------------------------------------------------------------------- //
+// ===== SERVER ===== //
 app.listen(PORT, () => {
-  console.log(`La broche tourne sur http://localhost:${PORT}`);
+  console.log(`Broche is turning on http://localhost:${PORT}`);
 });
